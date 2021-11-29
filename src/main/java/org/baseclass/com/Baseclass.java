@@ -4,12 +4,20 @@ import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
@@ -28,17 +36,18 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 public class Baseclass {
 	
 	public static WebDriver driver;
+	public static String value;
 	
 	public static WebDriver getBrowser(String type) {
 
    if (type.equalsIgnoreCase("chrome")) {
 	System.setProperty("webdriver.chrome.driver",
-		System.getProperty("user.dir")+"//driver//chromedriver.exe");
+		System.getProperty("user.dir")+"//newdriver//chromedriver.exe");
 	 driver=new ChromeDriver();
 	
 } else if(type.equalsIgnoreCase("firefox")){
 	System.setProperty("webdriver.gecko.driver",
-			System.getProperty("user.dir")+"//driver//gecko.exe");
+			System.getProperty("user.dir")+"//newdriver//gecko.exe");
 	driver=new FirefoxDriver();
 }
    driver.manage().window().maximize();
@@ -225,8 +234,8 @@ public class Baseclass {
 
 }
    
-   public static void implicitlyWait(int sec) {
-	   driver.manage().timeouts().implicitlyWait(sec, TimeUnit.SECONDS);
+   public static void implicitlyWait(long time,TimeUnit unit ) {
+	   driver.manage().timeouts().implicitlyWait(time, TimeUnit.SECONDS);
 	
 
 }
@@ -298,6 +307,36 @@ public class Baseclass {
 	  }}
 		driver.switchTo().window(u);
 	}
+  
+  public static String data_Driven(String path, int sh,int r,int c) throws Throwable {
+	  File f= new File(path);
+	  FileInputStream fis= new FileInputStream(f);
+	  Workbook w= new XSSFWorkbook(fis);
+	  Sheet sheetAt = w.getSheetAt(sh);
+	  Row row = sheetAt.getRow(r);
+	  Cell cell = row.getCell(c);
+	  CellType cellType = cell.getCellType();
+	  if(cellType.equals(cellType.STRING)){
+		  value = cell.getStringCellValue();
+	  }
+		    else if(cellType.equals(cellType.NUMERIC)) {
+		    	double numericCellValue = cell.getNumericCellValue();   
+		    	int val=(int)numericCellValue;
+		        value = String.valueOf(val);
+		    }
+		    return value;
+		    }
+  
+  //public static void data_drivenwrite() {
+  // File f= new File(path);
+  //  FileInputStream fis= new FileInputStream(f);
+  //  Workbook w= new XSSFWorkbook(fis);
+  //  Sheet sheetAt = w.getSheetAt(sh);
+	
+
+
+
+
 	  
   public static void alerts(WebElement element,String type) {
 	  element.click();
@@ -310,12 +349,15 @@ public class Baseclass {
 		  driver.switchTo().defaultContent();
 		   
 	  }
-  }
+  
+  }}
   /*public static void alert1(WebElement element,String value) {
 	element.click();
 	WebDriver alert = driver.switchTo().defaultContent();
 	alert.inputValueElement(value);*/
-}
+
+
+  
   
 
 	  

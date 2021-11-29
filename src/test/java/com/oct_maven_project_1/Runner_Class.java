@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 import org.baseclass.com.Baseclass;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -20,66 +22,60 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.pom.com.Home_Page;
 import org.pom.com.My_Order;
 import org.pom.com.Sign_In;
-
+import org.sdp.com.Page_Object_Manager;
+import com.helper.File_Reader_Manager;
 public class Runner_Class extends Baseclass {
 	
-public static WebDriver driver=Baseclass.getBrowser("chrome");
-public static Home_Page hp=new Home_Page(driver);
-public static Sign_In s =new Sign_In(driver);
-public static My_Order mo=new My_Order(driver);
-	
-public static void main(String[] args) throws InterruptedException, IOException {
-	
-	    getUrl("http://automationpractice.com/index.php");
-		max();
-		actions("moveToElement",hp.getWomen());
+static Logger log=Logger.getLogger(Runner_Class.class);
 
-		actions("doubleClick",hp.getTshirt());
+public static WebDriver driver=Baseclass.getBrowser("chrome");
+public static Page_Object_Manager pom= new Page_Object_Manager(driver);
+public static void main(String[] args) throws Throwable {
 	
-		//WebElement scroll = driver.findElement(By.xpath("//div[@class="product-image-container"]"));
-		explicitWait(hp.getScroll(),30);
-		scrollUpandDown(hp.getScroll());
-		//WebElement img = driver.findElement(By.xpath("//div[@class=\"product-image-container\"]"));
-		explicitWait(hp.getImg(),30);
-		clickOnElement(hp.getImg());
+	PropertyConfigurator.configure("log4j.properties");
+	    log.info("broswer launching");
+	    String url = File_Reader_Manager.getInstanceFRM().getInstanceCR().getUrl();
+	    getUrl(url);
+		max();
+		actions("moveToElement",pom.getInstanceHp().getWomen());
+		actions("doubleClick",pom.getInstanceHp().getTshirt());
+	    explicitWait(pom.getInstanceHp().getScroll(),30);
+		scrollUpandDown(pom.getInstanceHp().getScroll());
+		explicitWait(pom.getInstanceHp().getImg(),30);
+		clickOnElement(pom.getInstanceHp().getImg());
 		frame(0);
-		//WebElement color = driver.findElement(By.xpath("//a[@name=\"Blue\"]"));
-		explicitWait(hp.getColor(),30);
-		clickOnElement(hp.getColor());
-		
-		
-		clickOnElement(hp.getAddtocart());
-	
-		defaultContent();
-		explicitWait(hp.getCheckout(),30);
-		clickOnElement(hp.getCheckout());
-		
-	    clickOnElement(hp.getCheckout_2());
+		explicitWait(pom.getInstanceHp().getColor(),30);
+		clickOnElement(pom.getInstanceHp().getColor());
+		clickOnElement(pom.getInstanceHp().getAddtocart());
+	    defaultContent();
+	    explicitWait(pom.getInstanceHp().getCheckout(),30);
+		clickOnElement(pom.getInstanceHp().getCheckout());
+		clickOnElement(pom.getInstanceHp().getCheckout_2());
+	    //String email = File_Reader_Manager.getInstanceFRM().getInstanceCR().getEmail();
+	    String email = data_Driven("C:\\Users\\Daisy Rani\\eclipse-workspace\\oct_maven_project_1\\Excel\\Test case for MyStore.xlsx", 0, 2, 5);
 	    
-	    inputValueElement(s.getEmail(), "preci.pe7@gmail.com");
+	    inputValueElement(pom.getInstanceS().getEmail(), email);
+	    //String pass = File_Reader_Manager.getInstanceFRM().getInstanceCR().getPass();
+	    String password = data_Driven("C:\\Users\\Daisy Rani\\eclipse-workspace\\oct_maven_project_1\\Excel\\Test case for MyStore.xlsx", 0, 8, 5);
 	    
-	    inputValueElement(s.getPass(),"Prici@07");
+	    inputValueElement(pom.getInstanceS().getPass(), password);
 	   
-	    clickOnElement(s.getButton());
+	    clickOnElement(pom.getInstanceS().getButton());
 	   
-	    clickOnElement(mo.getAddress());
+	    clickOnElement(pom.getInstanceMo().getAddress());
 	   
-	    clickOnElement(mo.getShipping());
+	    clickOnElement(pom.getInstanceMo().getShipping());
 	    
-	    clickOnElement(mo.getTerms_accept());
+	    clickOnElement(pom.getInstanceMo().getTerms_accept());
 	    
-	    clickOnElement(mo.getMode_of_pay());
+	    clickOnElement(pom.getInstanceMo().getMode_of_pay());
 	    
-	    clickOnElement(mo.getConfirm_order());
+	    clickOnElement(pom.getInstanceMo().getConfirm_order());
 	    
 	    screenShots();
-	    
-	   
-	    
-	
+	    log.info("your order placed successfully");
 	    
 	    
-	
 	}
 
 
